@@ -31,7 +31,9 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        'Django>=1.8,<=1.11',
+        'Django==1.11;python_version<"3.0"',
+        'Django>=1.11,<2.1;python_version<"3.5"',
+        'Django>=1.11,<2.2;python_version>"3.4"',
     ],
     license="BSD",
     zip_safe=False,
@@ -44,14 +46,12 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Framework :: Django',
-        'Framework :: Django :: 1.8',
-        'Framework :: Django :: 1.9',
-        'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.0',
+        'Framework :: Django :: 2.1'
     ],
 )

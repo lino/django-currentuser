@@ -20,7 +20,7 @@ Install django-currentuser::
 
 Add it to the middleware classes in your settings.py::
 
-    MIDDLEWARE_CLASSES = (
+    MIDDLEWARE = (
         ...,
         'django_currentuser.middleware.ThreadLocalUserMiddleware',
     )
@@ -53,12 +53,29 @@ differences (as of django-cuser v.2017.3.16):
 
 Release Notes
 -------------
+* 0.3.0 - update supported versions according to
+  https://www.djangoproject.com/download/#supported-versions and
+  https://devguide.python.org/#status-of-python-branches
+  - drop support for Python 3.2
+
+* 0.2.3 - support custom user model, drop Django 1.10 support
+* 0.2.2 - support Django 2.0
+* 0.2.1 - version fixes #9
+   - support Django 1.11.x and not just 1.11.0
+* 0.2.0 - New middleclass format
+  - Adapt to new object based middle class format of Django 1.10+
+  - Drop support for deprecated Django versions 1.8 and 1.9
+
+* 0.1.1 - minor release
+
+  * suppress warning for passed kwargs as long as they match the defaults (avoids them being printed during running
+    tests when fields are cloned)
 
 * 0.1.0 - initial release
 
   * provides middleware + methods to set + retrieve reference of currently logged in user from thread
   * provides CurrentUserField that by default stores the currently logged in user
-  * supports Django 1.8, 1.9, 1.10, 1.11 on python 2.7, 3.3, 3.4, 3.5, and 3.6 - as per the
+  * supports Django 1.10, 1.11 on python 2.7, 3.4, 3.5, and 3.6 - as per the
     `official django docs <https://docs.djangoproject.com/en/dev/faq/install/#what-python-version-can-i-use-with-django>`_
 
 
@@ -99,7 +116,7 @@ Setting up all Python versions
     sudo apt-get -y install software-properties-common
     sudo add-apt-repository ppa:fkrull/deadsnakes
     sudo apt-get update
-    for version in 3.3 3.5 3.6; do
+    for version in 3.4 3.5 3.6; do
       py=python$version
       sudo apt-get -y install ${py} ${py}-dev
     done

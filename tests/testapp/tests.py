@@ -2,7 +2,7 @@ import warnings
 
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser, Group
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.test.testcases import TestCase
 
@@ -93,7 +93,7 @@ class CurrentUserFieldTestCase(TestCase):
         assert_that(args, empty())
         assert_that(set(kwargs).intersection({"foo", "bar", "baz"}), empty())
 
-    def test_warning_is_raised_when_forbidden_arguments_are_passed(self):
+    def test_raises_warning_when_non_default_arguments_are_passed(self):
         with warnings.catch_warnings(record=True) as my_warnings:
             self.field_cls(Group)
             self.field_cls(default="foo")
@@ -103,11 +103,27 @@ class CurrentUserFieldTestCase(TestCase):
             assert_that([str(m.message) for m in my_warnings],
                         is_([CurrentUserField.warning] * 4))
 
+    def test_no_warning_raised_if_passed_argument_values_match_defaults(self):
+        with warnings.catch_warnings(record=True) as my_warnings:
+            self.field_cls(default=get_current_authenticated_user)
+            self.field_cls(null=True)
+            self.field_cls(to=settings.AUTH_USER_MODEL)
+            assert_that(my_warnings, has_length(0))
+
     def test_is_a_nullable_fk_to_the_user_model(self):
         field = self.field_cls()
-        assert_that(field.rel.to, is_(equal_to(settings.AUTH_USER_MODEL)))
+        foreignkey_model = self.get_related_model(field)
+        assert_that(foreignkey_model, is_(equal_to(settings.AUTH_USER_MODEL)))
         assert_that(field.null, is_(True))
 
     def test_default_value_is_get_current_django_user(self):
         field = self.field_cls()
         assert_that(field.default, is_(get_current_authenticated_user))
+
+    def get_related_model(self, field):
+        if hasattr(field, 'remote_field'):
+            rel = getattr(field, 'remote_field', None)
+            return getattr(rel, 'model')
+        else:  # only for Django <= 1.8
+            rel = getattr(field, 'rel', None)
+            return getattr(rel, 'to')
